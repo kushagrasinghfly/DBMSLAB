@@ -1,0 +1,109 @@
+
+--Copy ALL Below
+-- Creating the Bank table
+CREATE TABLE Bank (
+    bk_code VARCHAR2(10) PRIMARY KEY,
+    bk_name VARCHAR2(25) NOT NULL,
+    bk_address VARCHAR2(30) NOT NULL
+);
+
+-- Creating the Branch table
+CREATE TABLE Branch (
+    br_id VARCHAR2(10) PRIMARY KEY,
+    br_name VARCHAR2(25) NOT NULL,
+    br_address VARCHAR2(30) NOT NULL,
+    bk_code VARCHAR2(10),
+    CONSTRAINT fk_branch_bank FOREIGN KEY (bk_code) REFERENCES Bank(bk_code) ON DELETE CASCADE
+);
+
+-- Creating the Customer table
+CREATE TABLE Customer (
+    cust_ID NUMBER PRIMARY KEY,
+    cust_name VARCHAR2(25) NOT NULL,
+    phone_no VARCHAR2(15) UNIQUE NOT NULL,
+    address VARCHAR2(30) NOT NULL
+);
+
+-- Creating the Account table
+CREATE TABLE Account (
+    acc_no NUMBER PRIMARY KEY,
+    acc_type VARCHAR2(20) NOT NULL CHECK (acc_type IN ('Savings', 'Current')),
+    balance NUMBER(10,2) CHECK (balance >= 0),
+    br_id VARCHAR2(10),
+    CONSTRAINT fk_account_branch FOREIGN KEY (br_id) REFERENCES Branch(br_id) ON DELETE CASCADE
+);
+
+-- Creating the Customer_Account table (Many-to-Many Relationship)
+CREATE TABLE Customer_Account (
+    cust_ID NUMBER,
+    acc_no NUMBER,
+    PRIMARY KEY (cust_ID, acc_no),
+    CONSTRAINT fk_custAcc_customer FOREIGN KEY (cust_ID) REFERENCES Customer(cust_ID) ON DELETE CASCADE,
+    CONSTRAINT fk_custAcc_account FOREIGN KEY (acc_no) REFERENCES Account(acc_no) ON DELETE CASCADE
+);
+
+-- Creating the Loan table
+CREATE TABLE Loan (
+    loan_ID NUMBER PRIMARY KEY,
+    loan_type VARCHAR2(25) NOT NULL,
+    amount NUMBER(12,2) CHECK (amount > 0),
+    br_id VARCHAR2(10),
+    CONSTRAINT fk_loan_branch FOREIGN KEY (br_id) REFERENCES Branch(br_id) ON DELETE CASCADE
+);
+
+-- Creating the Customer_Loan table (Many-to-Many Relationship)
+CREATE TABLE Customer_Loan (
+    cust_ID NUMBER,
+    loan_ID NUMBER,
+    PRIMARY KEY (cust_ID, loan_ID),
+    CONSTRAINT fk_custLoan_customer FOREIGN KEY (cust_ID) REFERENCES Customer(cust_ID) ON DELETE CASCADE,
+    CONSTRAINT fk_custLoan_loan FOREIGN KEY (loan_ID) REFERENCES Loan(loan_ID) ON DELETE CASCADE
+);
+
+
+THE DATA:
+
+-- Inserting data into Bank table
+INSERT INTO Bank VALUES ('BK01', 'Axis Bank', 'MG Road');
+INSERT INTO Bank VALUES ('BK02', 'HDFC Bank', 'NITK');
+INSERT INTO Bank VALUES ('BK03', 'ICICI Bank', 'Surathkal');
+
+-- Inserting data into Branch table
+INSERT INTO Branch VALUES ('BR01', 'Main Branch', 'MG Road', 'BK01');
+INSERT INTO Branch VALUES ('BR02', 'City Branch', 'Surathkal', 'BK02');
+INSERT INTO Branch VALUES ('BR03', 'College Branch', 'NITK', 'BK03');
+
+-- Inserting data into Customer table
+INSERT INTO Customer VALUES (101, 'Ravi Kumar', '9876543210', 'MG Road');
+INSERT INTO Customer VALUES (102, 'Sita Verma', '8765432109', 'Surathkal');
+INSERT INTO Customer VALUES (103, 'Amit Sharma', '7654321098', 'NITK');
+INSERT INTO Customer VALUES (104, 'Rajesh Gupta', '6543210987', 'MG Road');
+INSERT INTO Customer VALUES (105, 'Neha Singh', '5432109876', 'Surathkal');
+
+-- Inserting data into Account table
+INSERT INTO Account VALUES (201, 'Savings', 15000.50, 'BR01');
+INSERT INTO Account VALUES (202, 'Current', 8000.75, 'BR02');
+INSERT INTO Account VALUES (203, 'Savings', 12000.25, 'BR03');
+INSERT INTO Account VALUES (204, 'Savings', 400.00, 'BR01');
+INSERT INTO Account VALUES (205, 'Current', 25000.00, 'BR02');
+
+-- Inserting data into Customer_Account table (many-to-many)
+INSERT INTO Customer_Account VALUES (101, 201);
+INSERT INTO Customer_Account VALUES (102, 202);
+INSERT INTO Customer_Account VALUES (103, 203);
+INSERT INTO Customer_Account VALUES (104, 204);
+INSERT INTO Customer_Account VALUES (105, 205);
+
+-- Inserting data into Loan table
+INSERT INTO Loan VALUES (301, 'Home Loan', 500000.00, 'BR01');
+INSERT INTO Loan VALUES (302, 'Vehicle Loan', 300000.00, 'BR02');
+INSERT INTO Loan VALUES (303, 'Personal Loan', 100000.00, 'BR03');
+INSERT INTO Loan VALUES (304, 'Home Loan', 250000.00, 'BR02');
+INSERT INTO Loan VALUES (305, 'Vehicle Loan', 200000.00, 'BR01');
+
+-- Inserting data into Customer_Loan table (many-to-many)
+INSERT INTO Customer_Loan VALUES (101, 301);
+INSERT INTO Customer_Loan VALUES (102, 302);
+INSERT INTO Customer_Loan VALUES (103, 303);
+INSERT INTO Customer_Loan VALUES (104, 304);
+INSERT INTO Customer_Loan VALUES (105, 305);
