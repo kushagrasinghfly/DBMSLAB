@@ -1,0 +1,100 @@
+-- Creating Employee Table
+CREATE TABLE Employee (
+    Fname VARCHAR(50),
+    Mname VARCHAR(50),
+    Lname VARCHAR(50) NOT NULL,
+    Ssn INT PRIMARY KEY NOT NULL,
+    Bdate DATE,
+    Address VARCHAR(255),
+    Gender CHAR(1),
+    Salary INT,
+    Super_Ssn INT,
+    Dept_num INT NOT NULL
+);
+
+-- Creating Department Table
+CREATE TABLE Department (
+    Dept_num INT PRIMARY KEY NOT NULL,
+    Dept_name VARCHAR(100) UNIQUE NOT NULL,
+    Mgr_Ssn INT,
+    Mgr_startdate DATE
+);
+
+-- Creating Department_Locations Table
+CREATE TABLE Department_Locations (
+    Dept_num INT NOT NULL,
+    Location VARCHAR(100) NOT NULL,
+    PRIMARY KEY (Dept_num, Location),
+    FOREIGN KEY (Dept_num) REFERENCES Department(Dept_num)
+);
+
+-- Creating Project Table
+CREATE TABLE Project (
+    Proj_num INT PRIMARY KEY NOT NULL,
+    Proj_name VARCHAR(100),
+    Proj_location VARCHAR(100),
+    Dept_num INT,
+    FOREIGN KEY (Dept_num) REFERENCES Department(Dept_num)
+);
+
+-- Creating Employee_Project Table
+CREATE TABLE Employee_Project (
+    Ssn INT NOT NULL,
+    Proj_num INT NOT NULL,
+    Hours INT,
+    PRIMARY KEY (Ssn, Proj_num),
+    FOREIGN KEY (Ssn) REFERENCES Employee(Ssn),
+    FOREIGN KEY (Proj_num) REFERENCES Project(Proj_num)
+);
+
+-- Creating Dependent Table
+CREATE TABLE Dependent (
+    Ssn INT NOT NULL,
+    Dept_name VARCHAR(100),
+    Gender CHAR(1),
+    Bdate DATE,
+    Relationship VARCHAR(50),
+    FOREIGN KEY (Ssn) REFERENCES Employee(Ssn)
+);
+
+-- Inserting values into Employee table
+INSERT INTO Employee VALUES
+('John', 'A', 'Smith', 101, '1985-06-15', 'New York', 'M', 8000, NULL, 1),
+('Alice', 'B', 'Johnson', 102, '1992-09-20', 'Los Angeles', 'F', 6000, 101, 2),
+('Robert', 'C', 'Williams', 103, '1988-11-12', 'Chicago', 'M', 4500, 101, 1),
+('Emma', 'D', 'Brown', 104, '1995-07-10', 'Houston', 'F', 7000, 102, 3),
+('Michael', 'E', 'Davis', 105, '1983-04-22', 'Phoenix', 'M', 9500, 103, 2);
+
+-- Inserting values into Department table
+INSERT INTO Department VALUES
+(1, 'Marketing', 101, '2015-03-10'),
+(2, 'Sales', 102, '2017-06-01'),
+(3, 'HR', 104, '2018-09-20');
+
+-- Inserting values into Department_Locations table
+INSERT INTO Department_Locations VALUES
+(1, 'New York'),
+(2, 'Los Angeles'),
+(3, 'Chicago');
+
+-- Inserting values into Project table
+INSERT INTO Project VALUES
+(1, 'Project A', 'New York', 1),
+(2, 'Project B', 'Los Angeles', 2),
+(3, 'SUPER', 'Chicago', 3);
+
+-- Inserting values into Employee_Project table
+INSERT INTO Employee_Project VALUES
+(101, 1, 40),
+(102, 2, 35),
+(103, 1, 30),
+(104, 3, 20),
+(105, 2, 25);
+
+-- Inserting values into Dependent table
+INSERT INTO Dependent VALUES
+(101, 'Marketing', 'F', '2012-05-12', 'Daughter'),
+(102, 'Sales', 'M', '2015-08-19', 'Son'),
+(103, 'Marketing', 'F', '2010-01-22', 'Wife'),
+(104, 'HR', 'M', '2018-12-05', 'Son'),
+(105, 'Sales', 'F', '2016-03-30', 'Daughter');
